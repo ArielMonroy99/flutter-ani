@@ -1,6 +1,7 @@
-import 'dart:math';
-
+import 'package:ani_con/models/esfera.dart';
+import 'package:ani_con/widgets/esfera.dart';
 import 'package:flutter/material.dart';
+
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -10,62 +11,41 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  double x = 0, y = 1;
-  Random random = Random();
-  List<Widget> esferas = [];
-  Color color = Colors.cyan;
-  Curve curve = Curves.linear;
+  List<Esfera> esferas = [];
+  int contador = 0;
+
+  void agregarEsfera() {
+    final esfera = Esfera.random();
+    setState(() {
+      esferas.add(esfera);
+    });
+  }
+
+  void eliminarEsfera(String id) {
+    setState(() {
+      esferas.removeWhere((e) => e.id == id);
+      contador++;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Recolectadas: $contador'),
+      ),
       body: Stack(
-        children: [
-          AnimatedAlign(
-            alignment: Alignment(x, y),
-            curve: curve,
-            duration: Duration(milliseconds: 1500),
-            onEnd: () {
-              // setState(() {
-              //   x = random.nextDouble() * 2 - 1;
-              //   y = random.nextDouble() * 2 - 1;
-              //   print('x = $x y = $y');
-              // });
-              setState(() {
-                if (y == 1) {
-                  color = Color.fromARGB(
-                    255,
-                    random.nextInt(255),
-                    random.nextInt(255),
-                    random.nextInt(255),
-                  );
-                  curve = Curves.linear;
-                }
-                y = 1;
-                x = 0;
-                curve = Curves.bounceOut;
-              });
-            },
-            child: Container(
-              width: 70,
-              height: 70,
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.all(Radius.circular(100)),
-              ),
-            ),
-          ),
-        ],
+        children: esferas
+            .map((e) => MovingSphere(
+                  key: ValueKey(e.id),
+                  esfera: e,
+                  onTap: () => eliminarEsfera(e.id),
+                ))
+            .toList(),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            // x = random.nextDouble() * 2 - 1;
-            // y = random.nextDouble() * 2 - 1;
-            // print('x = $x y = $y');
-            x = 0;
-            y = -1;
-          });
-        },
+        onPressed: agregarEsfera,
+        child: Icon(Icons.add),
       ),
     );
   }

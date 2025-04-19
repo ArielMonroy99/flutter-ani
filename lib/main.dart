@@ -1,4 +1,4 @@
-import 'package:ani_con/ani.rot.dart';
+import 'package:ani_con/ani.ali.dart';
 import 'package:flutter/material.dart';
 
 void main() {
